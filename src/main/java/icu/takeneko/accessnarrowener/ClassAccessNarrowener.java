@@ -17,20 +17,17 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 
-public class ClassAccessNarrower extends ClassTransformer {
+public class ClassAccessNarrowener extends ClassTransformer {
     private final Map<FieldRef, FieldNode> fieldNodeMap = new HashMap<>();
     private final Map<Integer, FieldMethodRef> getterRef = new HashMap<>();
     private final Map<Integer, FieldMethodRef> setterRef = new HashMap<>();
-    private List<ClassAccessNarrower> others;
+    private List<ClassAccessNarrowener> others;
     private final TransformRule transformRule;
 
-    public static void main(String[] args) {
-
-    }
-
-    public ClassAccessNarrower(
+    public ClassAccessNarrowener(
             String className,
-            TransformRule transformRule) {
+            TransformRule transformRule
+    ) {
         super(className);
         this.transformRule = transformRule;
     }
@@ -39,7 +36,7 @@ public class ClassAccessNarrower extends ClassTransformer {
     public ClassNode loadClassFile() throws IOException {
         super.loadClassFile();
         for (FieldNode field : this.classNode.fields) {
-            if (OpcodeUtil.isFinal(field.access)) continue;
+            if (OpcodeUtil.isFinal(field.access) && !OpcodeUtil.isPublic(field.access)) continue;
             fieldNodeMap.put(
                     new FieldRef(
                             field.access,
@@ -89,7 +86,7 @@ public class ClassAccessNarrower extends ClassTransformer {
             ListIterator<AbstractInsnNode> iter = method.instructions.iterator();
             while (iter.hasNext()) {
                 AbstractInsnNode insnNode = iter.next();
-                for (ClassAccessNarrower other : others) {
+                for (ClassAccessNarrowener other : others) {
                     Optional<AbstractInsnNode> optional = other.transformFieldAccessInsn(insnNode);
                     if (optional.isEmpty()) continue;
                     AbstractInsnNode insn = optional.get();
@@ -184,7 +181,7 @@ public class ClassAccessNarrower extends ClassTransformer {
         }
     }
 
-    public void setOtherClasses(List<ClassAccessNarrower> others) {
+    public void setOtherClasses(List<ClassAccessNarrowener> others) {
         this.others = others;
     }
 }

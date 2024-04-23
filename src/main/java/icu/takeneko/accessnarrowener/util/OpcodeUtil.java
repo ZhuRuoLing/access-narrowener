@@ -44,6 +44,10 @@ public class OpcodeUtil {
         return (access & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE;
     }
 
+    public static boolean isPublic(int access){
+        return (access & Opcodes.ACC_PUBLIC) == Opcodes.ACC_PUBLIC;
+    }
+
     public static boolean isFinal(int access){
         return (access & Opcodes.ACC_FINAL) == Opcodes.ACC_FINAL;
     }

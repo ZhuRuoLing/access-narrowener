@@ -21,7 +21,7 @@ public record FieldRef(
         String name,
         boolean isStatic
 ) {
-    private static final boolean ADD_SYNTHETIC = System.getProperty("accessnarrowener.addSynthetic") != null;
+    private static final boolean ADD_SYNTHETIC = System.getProperty("accessnarrowener.doNotAddSynthetic") == null;
 
     public MethodNode generateGetter() {
         MethodNode methodNode = new MethodNode();
@@ -40,7 +40,7 @@ public record FieldRef(
         methodNode.localVariables.add(new LocalVariableNode(
                 "this",
                 "L" + owner + ";",
-                owner,
+                "L" + owner + ";",
                 startLabel,
                 endLabel,
                 0
@@ -77,7 +77,7 @@ public record FieldRef(
         methodNode.localVariables.add(new LocalVariableNode(
                 "this",
                 "L" + owner + ";",
-                owner,
+                "L" + owner + ";",
                 startLabel,
                 endLabel,
                 0

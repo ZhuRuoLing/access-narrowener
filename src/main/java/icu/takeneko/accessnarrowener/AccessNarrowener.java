@@ -17,16 +17,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipError;
 import java.util.zip.ZipFile;
 
-public class AccessNarrower {
+public class AccessNarrowener {
 
     public static Map<String, byte[]> process(List<String> classNames, TransformRule rule) throws IOException {
-        List<ClassAccessNarrower> classes = new ArrayList<>();
-        classes.addAll(classNames.stream().map(it -> new ClassAccessNarrower(it, rule)).toList());
-        for (ClassAccessNarrower clz : classes) {
+        List<ClassAccessNarrowener> classes = new ArrayList<>();
+        classes.addAll(classNames.stream().map(it -> new ClassAccessNarrowener(it, rule)).toList());
+        for (ClassAccessNarrowener clz : classes) {
             clz.setOtherClasses(CollectionUtil.without(classes, clz));
             clz.loadClassFile();
         }
-        for (ClassAccessNarrower clz : classes) {
+        for (ClassAccessNarrowener clz : classes) {
             clz.transform();
         }
         Map<String, byte[]> result = new HashMap<>();
