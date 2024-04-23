@@ -1,6 +1,6 @@
 # access-narrowener
 
-> [!IMPORTANT]  
+> [!CAUTION]  
 > Do NOT use this project in production, this project just is a toy
 
 A java library to "narrowen" the access of fields in a class.  
