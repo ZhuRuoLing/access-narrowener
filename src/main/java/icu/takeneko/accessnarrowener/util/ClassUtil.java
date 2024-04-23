@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ClassUtil {
-    private static final Path patcherDumps = Path.of("./.access-narrowener");
+    public static final Path PATCHER_DUMP_PATH = Path.of("./.access-narrowener");
 
     public static byte[] getClassBytes(String className) throws IOException {
         try (InputStream in = ClassUtil.class.getClassLoader().getResourceAsStream(className.replace('.', '/') + ".class")) {
@@ -15,7 +15,7 @@ public class ClassUtil {
     }
 
     public static void writeClassBytes(String className, byte[] bytes) throws IOException {
-        Path path = patcherDumps.resolve(className + ".class");
+        Path path = PATCHER_DUMP_PATH.resolve(className.replace(".","/") + ".class");
         Files.createDirectories(path.getParent());
         Files.write(path, bytes);
     }

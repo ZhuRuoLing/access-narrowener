@@ -7,7 +7,9 @@ public class B {
     public List<String> list = new ArrayList<>();
 
     public static void main(String[] args) {
-
+        B b = new B();
+        b.lllllaalala();
+        b.aaaaa();
     }
 
     void aaaaa(){

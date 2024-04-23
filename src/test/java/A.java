@@ -4,7 +4,9 @@ public class A {
     public int kuyv;
 
     public static void main(String[] args) {
-
+        A a = new A();
+        a.ggg();
+        a.uuuuu();
     }
 
     public void ggg(){

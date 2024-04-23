@@ -1,6 +1,6 @@
 package icu.takeneko.accessnarrowener;
 
-import icu.takeneko.accessnarrowener.util.FieldUtil;
+import icu.takeneko.accessnarrowener.util.OpcodeUtil;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
@@ -12,6 +12,7 @@ import org.objectweb.asm.tree.ParameterNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public record FieldRef(
         int access,
@@ -24,8 +25,8 @@ public record FieldRef(
 
     public MethodNode generateGetter() {
         MethodNode methodNode = new MethodNode();
-        methodNode.name = generateGetterName();
-        methodNode.desc = String.format("()%s", descriptor);
+        methodNode.name = getterName();
+        methodNode.desc = getterDesc();
         methodNode.access = Opcodes.ACC_PUBLIC;
         if (ADD_SYNTHETIC) {
             methodNode.access |= Opcodes.ACC_SYNTHETIC;
@@ -52,15 +53,15 @@ public record FieldRef(
         } else {
             insnList.add(new FieldInsnNode(Opcodes.GETSTATIC, owner, name, descriptor));
         }
-        insnList.add(new InsnNode(FieldUtil.getReturnOpcode(descriptor)));
+        insnList.add(new InsnNode(OpcodeUtil.getReturnOpcode(descriptor)));
         insnList.add(endLabel);
         return methodNode;
     }
 
     public MethodNode generateSetter() {
         MethodNode methodNode = new MethodNode();
-        methodNode.name = generateSetterName();
-        methodNode.desc = String.format("(%s)V", descriptor);
+        methodNode.name = setterName();
+        methodNode.desc = setterDesc();
         methodNode.access = Opcodes.ACC_PUBLIC;
 
         if (ADD_SYNTHETIC) {
@@ -94,10 +95,10 @@ public record FieldRef(
         insnList.add(startLabel);
         if (!isStatic) {
             insnList.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            insnList.add(new VarInsnNode(FieldUtil.getLoadOpcode(descriptor), 1)); // param 1
+            insnList.add(new VarInsnNode(OpcodeUtil.getLoadOpcode(descriptor), 1)); // param 1
             insnList.add(new FieldInsnNode(Opcodes.PUTFIELD, owner, name, descriptor));
         } else {
-            insnList.add(new VarInsnNode(FieldUtil.getLoadOpcode(descriptor), 1)); // param 1
+            insnList.add(new VarInsnNode(OpcodeUtil.getLoadOpcode(descriptor), 1)); // param 1
             insnList.add(new FieldInsnNode(Opcodes.PUTSTATIC, owner, name, descriptor));
         }
         insnList.add(new InsnNode(Opcodes.RETURN));
@@ -105,11 +106,23 @@ public record FieldRef(
         return methodNode;
     }
 
-    public String generateGetterName() {
+    public String setterDesc(){
+        return String.format("(%s)V", descriptor);
+    }
+
+    public String getterDesc(){
+        return String.format("()%s", descriptor);
+    }
+
+    public String getterName() {
         return String.format("getter$%x$%s", owner.hashCode(), name);
     }
 
-    public String generateSetterName() {
+    public String setterName() {
         return String.format("setter$%x$%s", owner.hashCode(), name);
+    }
+
+    public int hash() {
+        return Objects.hash(owner, descriptor, name, isStatic);
     }
 }

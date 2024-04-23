@@ -7,8 +7,8 @@ import java.util.List;
 
 public class TransformRule {
     public static final TransformRule DEFAULT = new TransformRule(
-            List.of("Ljava"),
             List.of("java"),
+            List.of("java","module-info","package-info"),
             $ -> true,
             $ -> true
     );
