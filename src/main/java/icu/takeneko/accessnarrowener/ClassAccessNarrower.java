@@ -39,6 +39,7 @@ public class ClassAccessNarrower extends ClassTransformer {
     public ClassNode loadClassFile() throws IOException {
         super.loadClassFile();
         for (FieldNode field : this.classNode.fields) {
+            if (OpcodeUtil.isFinal(field.access)) continue;
             fieldNodeMap.put(
                     new FieldRef(
                             field.access,
@@ -99,9 +100,7 @@ public class ClassAccessNarrower extends ClassTransformer {
             }
         }
         fieldNodeMap.forEach((ref, fieldNode) -> {
-            if (!OpcodeUtil.isPrivate(fieldNode.access)) {
-                classNode.methods.add(ref.generateGetter());
-            }
+            classNode.methods.add(ref.generateGetter());
             if (!OpcodeUtil.isFinal(fieldNode.access)) {
                 classNode.methods.add(ref.generateSetter());
             }
